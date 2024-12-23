@@ -9,7 +9,6 @@ const App = () => {
   const [formData, setFormData] = useState({
     churchName: "",
     name: "",
-    no: "",
     token: "",
     author: "",
     mobileNo: "",
@@ -45,7 +44,7 @@ const App = () => {
     try {
       const response = await axios.post(apiUrl, { ...formData, completed: false });
       setEvents([...events, response.data]);
-      setFormData({ churchName: "", name: "", no: "", token: "", author: "", mobileNo: "" });
+      setFormData({ churchName: "", name: "", token: "", author: "", mobileNo: "" });
     } catch (error) {
       console.error("Error adding event:", error);
     }
@@ -200,14 +199,6 @@ const App = () => {
                   />
                   <input
                     type="text"
-                    name="no"
-                    placeholder="No"
-                    value={formData.no}
-                    onChange={handleChange}
-                    required
-                  />
-                  <input
-                    type="text"
                     name="token"
                     placeholder="Token"
                     value={formData.token}
@@ -247,7 +238,7 @@ const App = () => {
                        <div>
                         <strong>{event.name}</strong> - {event.churchName}
                         <p>
-                          No: {event.no}, Token: {event.token}, Author: {event.author},
+                          Token: {event.token}, Author: {event.author},
                           Mobile: {event.mobileNo}
                         </p>
                         <p>Status: {event.completed ? "Completed" : "Pending"}</p>

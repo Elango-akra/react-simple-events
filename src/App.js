@@ -254,10 +254,10 @@ const App = () => {
                       className={event.completed ? "completed" : ""}
                     >
                        <div>
-                        <strong>{event.name}</strong> - {event.churchName}
+                        <strong>Church Name</strong> - {event.churchName}
                         <p>
                           Dance: {event.no}, Token: {event.token}, Author: {event.author},
-                          Mobile: {event.mobileNo}
+                          Mobile: {event.mobileNo} Name: {event.name}
                         </p>
                         <p>Status: {event.completed ? "Completed" : "Pending"}</p>
                       </div>

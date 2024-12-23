@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
 import './App.css';
 
-const apiUrl = '${process.env.REACT_APP_API_URL}/events'; // Backend API URL
+const apiUrl = `${process.env.REACT_APP_API_URL}/events`; // Backend API URL
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ const App = () => {
   });
   const [events, setEvents] = useState([]);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [currentEventIndex, setCurrentEventIndex] = useState(0);
 
   // Load events from the backend

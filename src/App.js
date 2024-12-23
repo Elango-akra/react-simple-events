@@ -1,7 +1,9 @@
-// Import required dependencies
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import './App.css'; // Add custom styles if needed
+import axios from "axios";
+import './App.css';
+
+const apiUrl = "http://localhost:5000/events"; // Backend API URL
 
 const App = () => {
   const [formData, setFormData] = useState({
@@ -12,24 +14,22 @@ const App = () => {
     author: "",
     mobileNo: "",
   });
-  const [events, setEvents] = useState(() => {
-    const savedEvents = localStorage.getItem("events");
-    return savedEvents ? JSON.parse(savedEvents) : [];
-  });
+  const [events, setEvents] = useState([]);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [currentEventIndex, setCurrentEventIndex] = useState(0);
 
-  // Load events from localStorage
+  // Load events from the backend
   useEffect(() => {
-    const savedEvents = localStorage.getItem("events");
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(apiUrl);
+        setEvents(response.data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("events", JSON.stringify(events));
-  }, [events]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,17 +39,27 @@ const App = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setEvents([...events, { ...formData, id: Date.now(), completed: false }]);
-    setFormData({ churchName: "", name: "", no: "", token: "", author: "", mobileNo: "" });
+    try {
+      const response = await axios.post(apiUrl, { ...formData, completed: false });
+      setEvents([...events, response.data]);
+      setFormData({ churchName: "", name: "", no: "", token: "", author: "", mobileNo: "" });
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setEvents(events.filter((event) => event.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${apiUrl}/${id}`);
+      setEvents(events.filter((event) => event.id !== id));
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = async (id) => {
     const eventToEdit = events.find((event) => event.id === id);
     setFormData(eventToEdit);
     setEvents(events.filter((event) => event.id !== id));
@@ -67,12 +77,14 @@ const App = () => {
     setDraggedIndex(null);
   };
 
-  const toggleCompletion = (id) => {
-    setEvents(
-      events.map((event) =>
-        event.id === id ? { ...event, completed: !event.completed } : event
-      )
-    );
+  const toggleCompletion = async (id) => {
+    const event = events.find((event) => event.id === id);
+    try {
+      const updatedEvent = await axios.put(`${apiUrl}/${id}`, { ...event, completed: !event.completed });
+      setEvents(events.map((e) => (e.id === id ? updatedEvent.data : e)));
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
   };
 
   const EventViewer = () => {
@@ -83,17 +95,22 @@ const App = () => {
     const currentEvent = pendingEvents[validIndex] || null;
     const previousEvent = validIndex > 0 ? pendingEvents[validIndex - 1] : null;
     const nextEvent = validIndex < pendingEvents.length - 1 ? pendingEvents[validIndex + 1] : null;
-  
+
     useEffect(() => {
       const interval = setInterval(() => {
-        const savedEvents = localStorage.getItem("events");
-        if (savedEvents) {
-          setEvents(JSON.parse(savedEvents));
-        }
+        const fetchEvents = async () => {
+          try {
+            const response = await axios.get(apiUrl);
+            setEvents(response.data);
+          } catch (error) {
+            console.error("Error fetching events:", error);
+          }
+        };
+        fetchEvents();
       }, 1000);
       return () => clearInterval(interval);
     }, []);
-  
+
     return (
       <div className="event-viewer">
         <h2>Event Viewer</h2>
@@ -120,15 +137,43 @@ const App = () => {
       </div>
     );
   };
+
+  // EventOrder Component (added here)
+  const EventOrder = () => {
+    return (
+      <div className="preview">
+        <h2>Event Order</h2>
+        <h3>Completed Events</h3>
+        <ol>
+          {events
+            .filter((event) => event.completed)
+            .map((event) => (
+              <li key={event.id}>
+                {event.name} - {event.churchName}
+              </li>
+            ))}
+        </ol>
+        <h3>Pending Events</h3>
+        <ol>
+          {events
+            .filter((event) => !event.completed)
+            .map((event) => (
+              <li key={event.id}>
+                {event.name} - {event.churchName}
+              </li>
+            ))}
+        </ol>
+      </div>
+    );
+  };
+
   return (
     <Router>
       <div className="App">
         <h1>Christmas Stage Performance</h1>
-
         <nav>
           <Link to="/">Home</Link> | <Link to="/order">Event Order</Link> | <Link to="/viewer">Event Viewer</Link>
         </nav>
-
         <Routes>
           <Route
             path="/"
@@ -196,9 +241,9 @@ const App = () => {
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => handleDrop(index)}
-                      className="event-item"
+                      className={event.completed ? "completed" : ""}
                     >
-                      <div>
+                       <div>
                         <strong>{event.name}</strong> - {event.churchName}
                         <p>
                           No: {event.no}, Token: {event.token}, Author: {event.author},
@@ -207,7 +252,7 @@ const App = () => {
                         <p>Status: {event.completed ? "Completed" : "Pending"}</p>
                       </div>
                       <button onClick={() => toggleCompletion(event.id)}>
-                        Mark as {event.completed ? "Pending" : "Completed"}
+                        {event.completed ? "Undo" : "Complete"}
                       </button>
                       <button onClick={() => handleEdit(event.id)}>Edit</button>
                       <button onClick={() => handleDelete(event.id)}>Delete</button>
@@ -217,36 +262,7 @@ const App = () => {
               </>
             }
           />
-
-          <Route
-            path="/order"
-            element={
-              <div className="preview">
-                <h2>Event Order</h2>
-                <h3>Completed Events</h3>
-                <ol>
-                  {events
-                    .filter((event) => event.completed)
-                    .map((event) => (
-                      <li key={event.id}>
-                        {event.name} - {event.churchName}
-                      </li>
-                    ))}
-                </ol>
-                <h3>Pending Events</h3>
-                <ol>
-                  {events
-                    .filter((event) => !event.completed)
-                    .map((event) => (
-                      <li key={event.id}>
-                        {event.name} - {event.churchName}
-                      </li>
-                    ))}
-                </ol>
-              </div>
-            }
-          />
-
+          <Route path="/order" element={<EventOrder />} />
           <Route path="/viewer" element={<EventViewer />} />
         </Routes>
       </div>

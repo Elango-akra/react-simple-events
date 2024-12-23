@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
 import './App.css';
 
-const apiUrl = "http://localhost:5000/events"; // Backend API URL
+const apiUrl = '${process.env.REACT_APP_API_URL}/events'; // Backend API URL
 
 const App = () => {
   const [formData, setFormData] = useState({

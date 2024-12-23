@@ -119,19 +119,28 @@ const App = () => {
           {previousEvent && (
             <div className="previous-event">
               <h3>Previous Event</h3>
-              <p>{previousEvent.name} - {previousEvent.churchName}</p>
+              <strong>Church Name</strong> - {previousEvent.churchName}<br/>
+              <strong>Token</strong> - {previousEvent.token}<br/>
+              <strong>Dance</strong> - {previousEvent.no}<br/>
+              <strong>Name</strong> - {previousEvent.name}
             </div>
           )}
           {currentEvent && (
             <div className="current-event">
               <h3>Current Event</h3>
-              <p>{currentEvent.name} - {currentEvent.churchName}</p>
+              <strong>Church Name</strong> - {currentEvent.churchName}<br/>
+              <strong>Token</strong> - {currentEvent.token}<br/>
+              <strong>Dance</strong> - {currentEvent.no}<br/>
+              <strong>Name</strong> - {currentEvent.name}
             </div>
           )}
           {nextEvent && (
             <div className="next-event">
               <h3>Next Event</h3>
-              <p>{nextEvent.name} - {nextEvent.churchName}</p>
+              <strong>Church Name</strong> - {nextEvent.churchName}<br/>
+              <strong>Token</strong> - {nextEvent.token}<br/>
+              <strong>Dance</strong> - {nextEvent.no}<br/>
+              <strong>Name</strong> - {nextEvent.name}
             </div>
           )}
         </div>
@@ -247,7 +256,7 @@ const App = () => {
                        <div>
                         <strong>{event.name}</strong> - {event.churchName}
                         <p>
-                          No: {event.no}, Token: {event.token}, Author: {event.author},
+                          Dance: {event.no}, Token: {event.token}, Author: {event.author},
                           Mobile: {event.mobileNo}
                         </p>
                         <p>Status: {event.completed ? "Completed" : "Pending"}</p>

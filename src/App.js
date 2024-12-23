@@ -119,28 +119,28 @@ const App = () => {
           {previousEvent && (
             <div className="previous-event">
               <h3>Previous Event</h3>
-              <strong>Church Name</strong> - {previousEvent.churchName}<br/>
+              {/* <strong>Church Name</strong> - {previousEvent.churchName}<br/> */}
               <strong>Token</strong> - {previousEvent.token}<br/>
               <strong>Dance</strong> - {previousEvent.no}<br/>
-              <strong>Name</strong> - {previousEvent.name}
+              {/* <strong>Name</strong> - {previousEvent.name} */}
             </div>
           )}
           {currentEvent && (
             <div className="current-event">
               <h3>Current Event</h3>
-              <strong>Church Name</strong> - {currentEvent.churchName}<br/>
+              {/* <strong>Church Name</strong> - {currentEvent.churchName}<br/> */}
               <strong>Token</strong> - {currentEvent.token}<br/>
               <strong>Dance</strong> - {currentEvent.no}<br/>
-              <strong>Name</strong> - {currentEvent.name}
+              {/* <strong>Name</strong> - {currentEvent.name} */}
             </div>
           )}
           {nextEvent && (
             <div className="next-event">
               <h3>Next Event</h3>
-              <strong>Church Name</strong> - {nextEvent.churchName}<br/>
+              {/* <strong>Church Name</strong> - {nextEvent.churchName}<br/> */}
               <strong>Token</strong> - {nextEvent.token}<br/>
               <strong>Dance</strong> - {nextEvent.no}<br/>
-              <strong>Name</strong> - {nextEvent.name}
+              {/* <strong>Name</strong> - {nextEvent.name} */}
             </div>
           )}
         </div>
@@ -159,7 +159,7 @@ const App = () => {
             .filter((event) => event.completed)
             .map((event) => (
               <li key={event.id}>
-                {event.name} - {event.churchName}
+                {event.token} - {event.churchName}
               </li>
             ))}
         </ol>
@@ -169,7 +169,7 @@ const App = () => {
             .filter((event) => !event.completed)
             .map((event) => (
               <li key={event.id}>
-                {event.name} - {event.churchName}
+                {event.token} - {event.churchName}
               </li>
             ))}
         </ol>

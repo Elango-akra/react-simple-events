@@ -34,11 +34,11 @@ const db = new sqlite3.Database(path.resolve(__dirname, "events.db"), (err) => {
 
 // Create Event
 app.post("/events", (req, res) => {
-  const { churchName, name, token, author, mobileNo } = req.body;
+  const { churchName, name, no, token, author, mobileNo } = req.body;
   const stmt = db.prepare(
-    `INSERT INTO events (churchName, name, token, author, mobileNo) VALUES (?, ?, ?, ?, ?, ?)`
+    `INSERT INTO events (churchName, name, no, token, author, mobileNo) VALUES (?, ?, ?, ?, ?, ?)`
   );
-  stmt.run([churchName, name, token, author, mobileNo], function (err) {
+  stmt.run([churchName, name, no, token, author, mobileNo], function (err) {
     if (err) {
       return res.status(400).json({ message: "Error adding event", error: err });
     }
@@ -60,15 +60,15 @@ app.get("/events", (req, res) => {
 // Update Event
 app.put("/events/:id", (req, res) => {
   const { id } = req.params;
-  const { churchName, name, token, author, mobileNo, completed } = req.body;
+  const { churchName, name, no, token, author, mobileNo, completed } = req.body;
   const stmt = db.prepare(
-    `UPDATE events SET churchName = ?, name = ?, token = ?, author = ?, mobileNo = ?, completed = ? WHERE id = ?`
+    `UPDATE events SET churchName = ?, name = ?, no = ?, token = ?, author = ?, mobileNo = ?, completed = ? WHERE id = ?`
   );
-  stmt.run([churchName, name, token, author, mobileNo, completed, id], function (err) {
+  stmt.run([churchName, name, no, token, author, mobileNo, completed, id], function (err) {
     if (err) {
       return res.status(400).json({ message: "Error updating event", error: err });
     }
-    res.json({ id, churchName, name, token, author, mobileNo, completed });
+    res.json({ id, churchName, name, no, token, author, mobileNo, completed });
   });
   stmt.finalize();
 });

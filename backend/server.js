@@ -21,6 +21,7 @@ const db = new sqlite3.Database(path.resolve(__dirname, "events.db"), (err) => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         churchName TEXT,
         name TEXT,
+        no TEXT,
         token TEXT,
         author TEXT,
         mobileNo TEXT,
